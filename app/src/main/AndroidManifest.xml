@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.privatez.androiddemos">
+
+    <!--wifi p2p-->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.privatez.androiddemos.download"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".p2p.ui.P2pActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".p2p.ui.ReceiveActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".p2p.ui.SendActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".delete.WifiP2pReceiveActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".delete.WifiP2pPushActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".viewpage.RotateActivity"
+            android:screenOrientation="portrait"/>
+
+    </application>
+
+</manifest>
