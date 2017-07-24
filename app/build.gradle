@@ -11,16 +11,27 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        releaseConfig {
+            keyAlias 'cloudmining'
+            keyPassword '123456'
+            storeFile file('./cloudmining.jks')
+            storePassword '123456'
+
+            v2SigningEnabled false
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfig
         }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -29,4 +40,5 @@ dependencies {
     compile 'com.google.zxing:core:3.3.0'
     compile 'pub.devrel:easypermissions:0.4.0'
     compile 'com.google.code.gson:gson:2.8.0'
+    compile files('libs/zmq.jar')
 }
