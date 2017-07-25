@@ -8,6 +8,7 @@ import com.privatez.androiddemos.util.LogHelper;
 import org.zeromq.ZMQ;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -40,11 +41,26 @@ public class ZeroMQMessageTask extends AsyncTask<String, Void, String> {
         worker.send(bytes, ZMQ.SNDMORE);
         worker.send("".getBytes(), 0);
 
+
         LogHelper.log("sended");
         byte[] data = worker.recv();
         result = new String(data);
-
+        LogHelper.log("recv" + data);
         LogHelper.log("recv" + result);
+        data = worker.recv();
+        result = new String(data);
+        LogHelper.log("recv" + data);
+        LogHelper.log("recv" + result);
+        data = worker.recv();
+        result = new String(data);
+
+        Serializer serializer = new Serializer(data);
+        int height = serializer.readUnsignedInt();
+
+        LogHelper.log("recv" + data);
+        LogHelper.log("recv" + result);
+        LogHelper.log("recv" + serializer.readUnsignedInt());
+
 
         return result;
     }
@@ -52,5 +68,67 @@ public class ZeroMQMessageTask extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         uiThreadHandler.sendMessage(Util.bundledMessage(uiThreadHandler, result));
+    }
+
+    private static class Serializer {
+        private byte[] data_;
+        private int iterator_;
+        private int length;
+
+        public Serializer(byte[] bytes) {
+            data_ = Arrays.copyOf(bytes, bytes.length);
+            iterator_ = 0;
+            length = data_.length;
+        }
+
+        public int iterator() {
+            return iterator_;
+        }
+
+        public int readUnsignedInt() throws IndexOutOfBoundsException {
+            if (iterator_ >= length)
+                throw new IndexOutOfBoundsException();
+            int result = (int) data_[iterator_] & 0xFF;
+            for (int i = 1; i < 4; i++)
+                result += ((int) data_[++iterator_] & 0xFF) << (i * 8);
+            iterator_++;
+            return result;
+        }
+
+        public String readString() throws IndexOutOfBoundsException {
+            if (iterator_ >= length)
+                throw new IndexOutOfBoundsException();
+            int idx = iterator_;
+            while (idx < length && 0 <= (data_[idx] & 0xFF) && (data_[idx] & 0xFF) <= 127) {
+                idx++;
+            }
+            String str = idx > iterator_ ? new String(Arrays.copyOfRange(data_, iterator_, idx)) : null;
+            iterator_ = idx > iterator_ ? idx : iterator_;
+            return str;
+        }
+
+        public byte readByte() throws IndexOutOfBoundsException {
+            if (iterator_ >= length)
+                throw new IndexOutOfBoundsException();
+            byte data = data_[iterator_++];
+            return data;
+        }
+
+        private String readHash(int size) throws IndexOutOfBoundsException {
+            if (iterator_ >= length)
+                throw new IndexOutOfBoundsException();
+            int hashSize = size;
+            String hash = new String(Arrays.copyOfRange(data_, iterator_, iterator_ + hashSize));
+            iterator_ += hashSize;
+            return hash;
+        }
+
+        public String readHash() {
+            return readHash(32);
+        }
+
+        public String readShortHash() {
+            return readHash(20);
+        }
     }
 }
