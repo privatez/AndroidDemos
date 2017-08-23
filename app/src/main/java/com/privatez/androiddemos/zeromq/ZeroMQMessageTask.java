@@ -61,7 +61,6 @@ public class ZeroMQMessageTask extends AsyncTask<String, Void, String> {
         LogHelper.log("recv" + result);
         LogHelper.log("recv" + serializer.readUnsignedInt());
 
-
         return result;
     }
 
